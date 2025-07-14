@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Campaign Manager</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #34495e;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 8px;
+            margin-top: 40px;
+            margin-bottom: 25px;
+        }
+
+        .form-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        button {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #2980b9, #1f5f8b);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .delete-btn:hover {
+            background: linear-gradient(135deg, #c0392b, #a93226);
+        }
+
+        .toggle-btn {
+            background: linear-gradient(135deg, #27ae60, #229954);
+        }
+
+        .toggle-btn:hover {
+            background: linear-gradient(135deg, #229954, #1e8449);
+        }
+
+        .search-section {
+            background: #fff3cd;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border-left: 4px solid #ffc107;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        th, td {
+            padding: 15px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            background: linear-gradient(135deg, #34495e, #2c3e50);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        tbody tr:hover {
+            background-color: #f8f9fa;
+            transition: background-color 0.2s ease;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .status-active {
+            color: #27ae60;
+            font-weight: bold;
+            background: #d5f4e6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .status-inactive {
+            color: #e74c3c;
+            font-weight: bold;
+            background: #fadbd8;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .message {
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        #cancelBtn {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            display: none;
+        }
+
+        #cancelBtn:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .action-buttons button {
+            margin: 0;
+            padding: 8px 12px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .row {
+                grid-template-columns: 1fr;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 10px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Campaign Manager</h1>
+
+    <div id="message"></div>
+
+    <div class="form-section">
+        <h2>Dodaj nową kampanię</h2>
+        <form id="campaignForm">
+            <input type="hidden" id="editId" value="">
+
+            <div class="form-group">
+                <label for="name">Nazwa kampani</label>
+                <input type="text" id="name" required placeholder="Wpisz nazwe kampanii">
+            </div>
+
+            <div class="form-group">
+                <label for="keywords">Słowa kluczowe</label>
+                <input type="text" id="keywords" placeholder="np. marketing, reklama, sprzedaż">
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="bidAmount">Stawka (PLN)</label>
+                    <input type="text" id="bidAmount" placeholder="np. 350,50">
+                </div>
+                <div class="form-group">
+                    <label for="campaignFund">Fundusz (PLN)</label>
+                    <input type="text" id="campaignFund" placeholder="np. 10000,25">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="form-group">
+                    <label for="town">Miasto</label>
+                    <select id="town" required>
+                        <option value="">Wybierz miasto</option>
+                        <option value="Warszawa">Warszawa</option>
+                        <option value="Kraków">Kraków</option>
+                        <option value="Gdańsk">Gdańsk</option>
+                        <option value="Wrocław">Wrocław</option>
+                        <option value="Poznan">Poznan</option>
+                        <option value="Łódź">Łódź</option>
+                        <option value="Szczecin">Szczecin</option>
+                        <option value="Bydgoszcz">Bydgoszcz</option>
+                        <option value="Lublin">Lublin</option>
+                        <option value="Katowice">Katowice</option>
+                        <option value="Białystok">Białystok</option>
+                        <option value="Gdynia">Gdynia</option>
+                        <option value="Częstochowa">Częstochowa</option>
+                        <option value="Radom">Radom</option>
+                        <option value="Toruń">Toruń</option>
+                        <option value="Sosnowiec">Sosnowiec</option>
+                        <option value="Kielce">Kielce</option>
+                        <option value="Gliwice">Gliwice</option>
+                        <option value="Zabrze">Zabrze</option>
+                        <option value="Olsztyn">Olsztyn</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="radius">Promień (km)</label>
+                    <input type="number" id="radius" min="1" placeholder="np. 25">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status kampanii</label>
+                <select id="status" required>
+                    <option value="true">Aktywna</option>
+                    <option value="false">Nieaktywna</option>
+                </select>
+            </div>
+
+            <button type="submit" id="submitBtn">Dodaj kampanie</button>
+            <button type="button" id="cancelBtn">Anuluj</button>
+        </form>
+    </div>
+
+    <div class="search-section">
+        <h2>Wyszukaj kampanię</h2>
+        <div class="row">
+            <input type="text" id="searchName" placeholder="Nazwa kampani">
+            <input type="text" id="searchKeywords" placeholder="Słowa kluczowe">
+        </div>
+
+        <div class="row">
+            <select id="searchTown">
+                <option value="">Wszystkie miasta</option>
+                <option value="Warszawa">Warszawa</option>
+                <option value="Kraków">Kraków</option>
+                <option value="Gdańsk">Gdańsk</option>
+                <option value="Wrocław">Wrocław</option>
+                <option value="Poznan">Poznan</option>
+                <option value="Łódź">Łódź</option>
+                <option value="Szczecin">Szczecin</option>
+                <option value="Bydgoszcz">Bydgoszcz</option>
+                <option value="Lublin">Lublin</option>
+                <option value="Katowice">Katowice</option>
+                <option value="Białystok">Białystok</option>
+                <option value="Gdynia">Gdynia</option>
+                <option value="Częstochowa">Częstochowa</option>
+                <option value="Radom">Radom</option>
+                <option value="Toruń">Toruń</option>
+                <option value="Sosnowiec">Sosnowiec</option>
+                <option value="Kielce">Kielce</option>
+                <option value="Gliwice">Gliwice</option>
+                <option value="Zabrze">Zabrze</option>
+                <option value="Olsztyn">Olsztyn</option>
+            </select>
+            <select id="searchStatus">
+                <option value="">Wszystkie statusy</option>
+                <option value="true">Aktywne</option>
+                <option value="false">Nieaktywne</option>
+            </select>
+            <button onclick="searchCampaigns()">Szukaj</button>
+            <button onclick="loadCampaigns()">Pokaz wszystkie</button>
+        </div>
+    </div>
+
+    <h2>Lista kampanii</h2>
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 60px;">ID</th>
+                <th style="width: 150px;">Nazwa</th>
+                <th style="width: 180px;">Slowa kluczowe</th>
+                <th style="width: 80px;">Stawka</th>
+                <th style="width: 80px;">Fundusz</th>
+                <th style="width: 100px;">Miasto</th>
+                <th style="width: 70px;">Promień</th>
+                <th style="width: 80px;">Status</th>
+                <th style="width: 200px;">Akcje</th>
+            </tr>
+            </thead>
+            <tbody id="campaignList">
+            <tr>
+                <td colspan="9" class="loading">Ładowanie kampanii...</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const API_URL = 'http://localhost:8080/api/campaigns';
+
+    // Helper funkcje
+    function stringToKeywordsArray(keywordsString) {
+        if (!keywordsString || keywordsString.trim() === '') {
+            return [];
+        }
+        return keywordsString.split(',')
+            .map(keyword => keyword.trim())
+            .filter(keyword => keyword.length > 0);
+    }
+
+    function keywordsArrayToString(keywordsArray) {
+        if (!keywordsArray || keywordsArray.length === 0) {
+            return '';
+        }
+        return keywordsArray.join(', ');
+    }
+
+    // zmiana przecinka na kropkę
+    function parseDecimalInput(value) {
+        if (!value || value.trim() === '') {
+            return null;
+        }
+        //  przecinek na kropkę
+        const normalized = value.replace(',', '.');
+        const parsed = parseFloat(normalized);
+        return isNaN(parsed) ? null : parsed;
+    }
+
+    //  fomatowanie liczb z przecinkami
+    function formatDecimalOutput(value) {
+        if (!value) return '';
+        return value.toString().replace('.', ',');
+    }
+
+    // ladowniej na starcie
+    window.onload = function() {
+        loadCampaigns();
+    };
+
+    //  listener  formularza
+    document.getElementById('campaignForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        const editId = document.getElementById('editId').value;
+        const keywordsString = document.getElementById('keywords').value;
+        const bidAmountValue = document.getElementById('bidAmount').value;
+        const campaignFundValue = document.getElementById('campaignFund').value;
+        const radius = document.getElementById('radius').value;
+
+        const campaign = {
+            name: document.getElementById('name').value,
+            keyWords: stringToKeywordsArray(keywordsString),
+            bidAmount: parseDecimalInput(bidAmountValue),
+            campaignFund: parseDecimalInput(campaignFundValue),
+            town: document.getElementById('town').value,
+            radius: radius ? parseInt(radius) : null,
+            status: document.getElementById('status').value === 'true'
+        };
+
+        if (editId) {
+            updateCampaign(editId, campaign);
+        } else {
+            createCampaign(campaign);
+        }
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        resetForm();
+    });
+
+    function createCampaign(campaign) {
+        fetch(API_URL, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(campaign)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        throw new Error(error.message || 'Wystapil blad');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                showMessage('Kampania została dodana pomyślnie!', 'success');
+                resetForm();
+                loadCampaigns();
+            })
+            .catch(error => {
+                showMessage('Błąd podczas dodawania kampanii: ' + error.message, 'error');
+            });
+    }
+
+    function updateCampaign(id, campaign) {
+        fetch(API_URL + '/' + id, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(campaign)
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        throw new Error(error.message || 'Wystapil blad');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                showMessage('Kampania została zaktualizowana pomyślnie!', 'success');
+                resetForm();
+                loadCampaigns();
+            })
+            .catch(error => {
+                showMessage('Blad podczas aktualizacji kampanii: ' + error.message, 'error');
+            });
+    }
+
+    function loadCampaigns() {
+        const tbody = document.getElementById('campaignList');
+        tbody.innerHTML = '<tr><td colspan="9" class="loading">Ładowanie kampanii...</td></tr>';
+
+        fetch(API_URL)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Nie udało się pobrać kampanii');
+                }
+                return response.json();
+            })
+            .then(campaigns => {
+                displayCampaigns(campaigns);
+            })
+            .catch(error => {
+                showMessage('Blad ladowania kampani: ' + error.message, 'error');
+                tbody.innerHTML = '<tr><td colspan="9" class="error">Blad ladowania kampani</td></tr>';
+            });
+    }
+
+    function searchCampaigns() {
+        const name = document.getElementById('searchName').value;
+        const keywords = document.getElementById('searchKeywords').value;
+        const town = document.getElementById('searchTown').value;
+        const status = document.getElementById('searchStatus').value;
+
+        let url = API_URL + '/search?';
+        if (name) url += 'name=' + encodeURIComponent(name) + '&';
+        if (keywords) url += 'keywords=' + encodeURIComponent(keywords) + '&';
+        if (town) url += 'town=' + encodeURIComponent(town) + '&';
+        if (status) url += 'status=' + status + '&';
+
+        fetch(url)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Nie udalo sie wyszukac kampani');
+                }
+                return response.json();
+            })
+            .then(campaigns => {
+                displayCampaigns(campaigns);
+            })
+            .catch(error => {
+                showMessage('Blad wyszukiwania: ' + error.message, 'error');
+            });
+    }
+
+    function displayCampaigns(campaigns) {
+        const tbody = document.getElementById('campaignList');
+        tbody.innerHTML = '';
+
+        if (campaigns.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; padding: 30px; color: #6c757d;">Brak kampanii do wyświetlenia</td></tr>';
+            return;
+        }
+
+        campaigns.forEach(campaign => {
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td style="font-weight: bold;">${campaign.id}</td>
+                <td style="font-weight: 500;">${campaign.name}</td>
+                <td style="font-size: 12px; color: #6c757d;">${keywordsArrayToString(campaign.keyWords)}</td>
+                <td style="font-weight: 500;">${campaign.bidAmount ? formatDecimalOutput(campaign.bidAmount.toFixed(2)) + ' PLN' : '-'}</td>
+                <td style="font-weight: 500;">${campaign.campaignFund ? formatDecimalOutput(campaign.campaignFund.toFixed(2)) + ' PLN' : '-'}</td>
+                <td>${campaign.town}</td>
+                <td>${campaign.radius ? campaign.radius + ' km' : '-'}</td>
+                <td><span class="${campaign.status ? 'status-active' : 'status-inactive'}">
+                    ${campaign.status ? 'Aktywna' : 'Nieaktywna'}
+                </span></td>
+                <td>
+                    <div class="action-buttons">
+                        <button onclick="editCampaign(${campaign.id})">Edytuj</button>
+                        <button class="toggle-btn" onclick="toggleStatus(${campaign.id})">Przełącz</button>
+                        <button class="delete-btn" onclick="deleteCampaign(${campaign.id})">Usuń</button>
+                    </div>
+                </td>
+            `;
+        });
+    }
+
+    function editCampaign(id) {
+        fetch(API_URL + '/' + id)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Nie udalo sie pobrac kampani');
+                }
+                return response.json();
+            })
+            .then(campaign => {
+                document.getElementById('editId').value = campaign.id;
+                document.getElementById('name').value = campaign.name;
+                document.getElementById('keywords').value = keywordsArrayToString(campaign.keyWords);
+                document.getElementById('bidAmount').value = campaign.bidAmount ? formatDecimalOutput(campaign.bidAmount.toString()) : '';
+                document.getElementById('campaignFund').value = campaign.campaignFund ? formatDecimalOutput(campaign.campaignFund.toString()) : '';
+                document.getElementById('town').value = campaign.town;
+                document.getElementById('radius').value = campaign.radius || '';
+                document.getElementById('status').value = campaign.status.toString();
+                document.getElementById('submitBtn').textContent = 'Aktualizuj kampanie';
+                document.getElementById('cancelBtn').style.display = 'inline';
+
+                // Scroll do formularza
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+            })
+            .catch(error => {
+                showMessage('Blad podczas edycji: ' + error.message, 'error');
+            });
+    }
+
+    function toggleStatus(id) {
+        fetch(API_URL + '/' + id + '/status', {
+            method: 'PATCH'
+        })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(error => {
+                        throw new Error(error.message || 'Wystapil blad');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                showMessage('Status kampanii został zmieniony pomyślnie!', 'success');
+                loadCampaigns();
+            })
+            .catch(error => {
+                showMessage('Blad podczas zmiany statusu: ' + error.message, 'error');
+            });
+    }
+
+    function deleteCampaign(id) {
+        if (confirm('Czy na pewno chcesz usunąć tę kampanię?')) {
+            fetch(API_URL + '/' + id, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(error => {
+                            throw new Error(error.message || 'Wystapil blad');
+                        });
+                    }
+                    showMessage('Kampania została usunięta pomyślnie!', 'success');
+                    loadCampaigns();
+                })
+                .catch(error => {
+                    showMessage('Blad podczas usuwania kampanii: ' + error.message, 'error');
+                });
+        }
+    }
+
+    function resetForm() {
+        document.getElementById('campaignForm').reset();
+        document.getElementById('editId').value = '';
+        document.getElementById('submitBtn').textContent = 'Dodaj kampanie';
+        document.getElementById('cancelBtn').style.display = 'none';
+    }
+
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.innerHTML = '<div class="message ' + type + '">' + message + '</div>';
+        setTimeout(() => {
+            messageDiv.innerHTML = '';
+        }, 5000);
+    }
+</script>
+</body>
+</html>
